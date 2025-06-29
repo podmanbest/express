@@ -1,0 +1,35 @@
+services:
+  nodejs:
+    container_name: nodejs
+    image: localhost/nodejs:1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/work:Z
+    ports:
+      - 5000:5000
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v3.3.0
+    ports:
+      - '9090:9090'
+    command: --config.file=/etc/prometheus/prometheus.yaml
+    volumes:
+      - ./configs/prometheus.yaml:/etc/prometheus/prometheus.yaml:Z
+    depends_on:
+      - nodejs
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+volumes:
+  grafana-storage:
