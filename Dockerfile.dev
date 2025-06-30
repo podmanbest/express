@@ -1,26 +1,15 @@
 FROM node:18-alpine
 
-# Install dependencies termasuk cifs-utils dan bash
-RUN apk update && apk add --no-cache cifs-utils bash
+# Install dependencies
+RUN apk update && apk add --no-cache \
+    bash \
+    curl
 
 WORKDIR /app
-
-# Copy package files terlebih dahulu
-COPY package*.json ./
-
-# Install dependencies
+COPY ./debug .
+RUN chmod +x entrypoint.sh
 RUN npm install
-
-# Install nodemon secara global
-RUN npm install -g nodemon
-
-# Copy semua file (kecuali yang di .dockerignore)
-COPY . .
-
-# Buat direktori yang diperlukan
-RUN mkdir -p /mnt/nas_uploads /app/logs
 
 EXPOSE 3000
 
-# Gunakan nodemon dengan watch yang benar
-CMD ["nodemon", "--legacy-watch", "--watch", "/app", "src/server.js"]
+CMD ["nodemon", "--legacy-watch", "--watch", "/app", "server.js"]
