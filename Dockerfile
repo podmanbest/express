@@ -6,10 +6,9 @@ RUN apk update && apk add --no-cache \
     curl
 
 WORKDIR /app
-COPY ./debug .
+COPY ./src .
 RUN chmod +x entrypoint.sh
-RUN npm install
-
+RUN npm init
 EXPOSE 3000
 
-CMD ["nodemon", "--legacy-watch", "--watch", "/app", "server.js"]
+CMD ["node", "server.js"]
